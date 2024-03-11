@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+avto-ria-clone-api-db
+avto-ria-clone-api-s3-data
+
 # Logs
 logs
 *.log
