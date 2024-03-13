@@ -6,6 +6,7 @@ import { TransformHelper } from '../../../../../common/helpers/transform.helper'
 import { regexConstant } from '../../../../../constants/regex.constants';
 
 export class BaseUserRequestDto {
+  @ApiProperty()
   @IsOptional()
   @IsString()
   @Length(3, 50)
@@ -23,10 +24,6 @@ export class BaseUserRequestDto {
   @Length(0, 3000)
   image?: string;
 
-  @ApiProperty({
-    default: 'test@gmail.com',
-    description: 'This field should be a valid email address.',
-  })
   @IsString()
   @Length(0, 300)
   @Matches(regexConstant.EMAIL)

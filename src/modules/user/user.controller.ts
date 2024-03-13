@@ -44,14 +44,4 @@ export class UserController {
   ): Promise<UserResponseDto> {
     return await this.userService.getPublicUser(userId, userData);
   }
-
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // @ApiBearerAuth()
-  // @Delete(':userId/follow')
-  // public async unfollow(
-  //   @CurrentUser() userData: IUserData,
-  //   @Param('userId', ParseUUIDPipe) userId: string,
-  // ): Promise<void> {
-  //   await this.userService.unfollow(userData, userId);
-  // }
 }

@@ -8,4 +8,6 @@ export class UserResponseDto {
   email: string;
 
   image: string;
+
+  accountType: string;
 }

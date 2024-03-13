@@ -9,6 +9,7 @@ export class UserMapper {
       id: userEntity.id,
       image: userEntity.image,
       name: userEntity.name,
+      accountType: userEntity.accountType,
     };
   }
 }
