@@ -26,6 +26,15 @@ export class AuthController {
   }
 
   @SkipAuth()
+  @ApiOperation({ summary: 'Registration with ADMIN role' })
+  @Post('sign-up/admin')
+  public async signUpAdmin(
+    @Body() dto: SignUpRequestDto,
+  ): Promise<AuthUserResponseDto> {
+    return await this.authService.signUpAdmin(dto);
+  }
+
+  @SkipAuth()
   @ApiOperation({ summary: 'Login' })
   @Post('sign-in')
   public async signIn(
@@ -41,7 +50,6 @@ export class AuthController {
     await this.authService.logout(userData);
   }
 
-  @SkipAuth()
   @ApiBearerAuth()
   @UseGuards(JwtRefreshGuard)
   @ApiOperation({ summary: 'Update token pair' })

@@ -1,3 +1,5 @@
+import { RolesEnum } from '../../../../../database/enums/roles.enum';
+
 export class UserResponseDto {
   id: string;
 
@@ -10,4 +12,6 @@ export class UserResponseDto {
   image: string;
 
   accountType: string;
+
+  role: RolesEnum;
 }

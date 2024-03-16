@@ -9,14 +9,14 @@ import { UserEntity } from './user.entity';
 
 @Entity(TableNameEnum.CARS)
 export class CarEntity extends BaseModel {
-  @Column('date')
-  year: Date;
+  @Column({ type: 'int' })
+  year: number;
 
-  @Column('text')
-  color: string;
+  @Column('text', { nullable: true })
+  color?: string;
 
-  @Column('int')
-  mileage: number;
+  @Column('int', { nullable: true })
+  mileage?: number;
 
   @Column('int')
   prise: number;

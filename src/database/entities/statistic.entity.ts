@@ -6,9 +6,6 @@ import { BaseModel } from './models/base.model';
 
 @Entity(TableNameEnum.STATISTICS)
 export class StatisticEntity extends BaseModel {
-  @Column('int')
-  views: number;
-
   @Column()
   advertisement_id: string;
   @ManyToOne(() => AdvertisementEntity, (entity) => entity.views)

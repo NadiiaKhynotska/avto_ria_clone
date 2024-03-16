@@ -1,12 +1,12 @@
-import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
+import { RolesEnum } from '../enums/roles.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { AdvertisementEntity } from './advertisement.entity';
 import { CarEntity } from './car.entity';
 import { BaseModel } from './models/base.model';
 import { RefreshTokenEntity } from './refresh-token.entity';
-import { RoleEntity } from './role.entity';
 
 @Entity(TableNameEnum.USERS)
 export class UserEntity extends BaseModel {
@@ -32,6 +32,13 @@ export class UserEntity extends BaseModel {
   })
   accountType: AccountTypeEnum;
 
+  @Column({
+    type: 'enum',
+    enum: RolesEnum,
+    default: RolesEnum.BUYER,
+  })
+  roles: RolesEnum;
+
   @OneToMany(() => RefreshTokenEntity, (entity) => entity.user)
   refreshTokens?: RefreshTokenEntity[];
 
@@ -40,7 +47,4 @@ export class UserEntity extends BaseModel {
 
   @OneToMany(() => CarEntity, (entity) => entity.user)
   cars?: CarEntity[];
-
-  @ManyToMany(() => RoleEntity, (entity) => entity.users)
-  roles?: RoleEntity[];
 }

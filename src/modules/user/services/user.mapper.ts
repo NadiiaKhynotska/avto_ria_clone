@@ -10,6 +10,7 @@ export class UserMapper {
       image: userEntity.image,
       name: userEntity.name,
       accountType: userEntity.accountType,
+      role: userEntity.roles,
     };
   }
 }

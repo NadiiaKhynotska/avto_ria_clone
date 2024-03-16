@@ -5,14 +5,12 @@ import { CarRepository } from './services/car.repository';
 import { CarBrandRepository } from './services/car-brand.repository';
 import { CarModelRepository } from './services/car-model.repository';
 import { RefreshTokenRepository } from './services/refresh-token.repository';
-import { RoleRepository } from './services/role.repository';
 import { StatisticRepository } from './services/statistic.repository';
 import { UserRepository } from './services/user.repository';
 
 const repositories = [
   UserRepository,
   StatisticRepository,
-  RoleRepository,
   RefreshTokenRepository,
   CarModelRepository,
   CarBrandRepository,

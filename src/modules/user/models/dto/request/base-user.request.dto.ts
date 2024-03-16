@@ -14,16 +14,22 @@ export class BaseUserRequestDto {
   @Type(() => String)
   name?: string;
 
+  @ApiProperty()
   @IsOptional()
   @IsString()
   @Length(0, 300)
   bio?: string;
 
+  @ApiProperty()
   @IsOptional()
   @IsString()
   @Length(0, 3000)
   image?: string;
 
+  @ApiProperty({
+    default: 'test@gmail.com',
+    description: 'This field should be a valid email address.',
+  })
   @IsString()
   @Length(0, 300)
   @Matches(regexConstant.EMAIL)

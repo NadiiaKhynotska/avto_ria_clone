@@ -47,6 +47,7 @@ export class JwtRefreshGuard implements CanActivate {
       userId: user.id,
       email: user.email,
       deviceId: payload.deviceId,
+      roles: user.roles,
     };
     return true;
   }

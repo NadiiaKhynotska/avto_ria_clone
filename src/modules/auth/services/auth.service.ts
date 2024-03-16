@@ -1,6 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import { AccountTypeEnum } from '../../../database/enums/account-type.enum';
+import { RolesEnum } from '../../../database/enums/roles.enum';
 import { RefreshTokenRepository } from '../../repository/services/refresh-token.repository';
 import { UserRepository } from '../../repository/services/user.repository';
 import { UserService } from '../../user/services/user.service';
@@ -31,6 +33,40 @@ export class AuthService {
     const user = await this.userRepository.save(
       this.userRepository.create({ ...dto, password }),
     );
+
+    const tokens = await this.tokenService.generateAuthTokens({
+      userId: user.id,
+      deviceId: dto.deviceId,
+    });
+
+    await Promise.all([
+      this.refreshRepository.saveToken(
+        user.id,
+        dto.deviceId,
+        tokens.refreshToken,
+      ),
+      this.authCacheService.saveToken(
+        user.id,
+        dto.deviceId,
+        tokens.accessToken,
+      ),
+    ]);
+
+    return AuthMapper.toResponseDto(user, tokens);
+  }
+
+  public async signUpAdmin(
+    dto: SignUpRequestDto,
+  ): Promise<AuthUserResponseDto> {
+    await this.userService.isEmailUniqOrThrow(dto.email);
+
+    const password = await bcrypt.hash(dto.password, 10);
+    const user = this.userRepository.create({ ...dto, password });
+
+    user.roles = RolesEnum.ADMIN;
+    user.accountType = AccountTypeEnum.PREMIUM;
+
+    await this.userRepository.save(user);
 
     const tokens = await this.tokenService.generateAuthTokens({
       userId: user.id,

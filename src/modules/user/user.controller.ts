@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Put,
@@ -37,11 +40,27 @@ export class UserController {
   }
 
   @ApiBearerAuth()
+  @Put('me/seller')
+  public async becomeSeller(@CurrentUser() userData: IUserData): Promise<void> {
+    await this.userService.becomeSeller(userData);
+  }
+
+  @ApiBearerAuth()
   @Get(':userId')
   public async getPublicUser(
     @Param('userId', ParseUUIDPipe) userId: string,
     @CurrentUser() userData: IUserData,
   ): Promise<UserResponseDto> {
     return await this.userService.getPublicUser(userId, userData);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth()
+  @Delete(':userId')
+  public async delete(
+    @CurrentUser() userData: IUserData,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<void> {
+    await this.userService.delete(userData, userId);
   }
 }
