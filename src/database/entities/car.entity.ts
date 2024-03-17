@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 
+import { CurrencyEnum } from '../enums/currency.enum';
 import { TableNameEnum } from '../enums/table-name.enum';
 import { AdvertisementEntity } from './advertisement.entity';
 import { CarBrandEntity } from './car-brand.entity';
@@ -21,8 +22,12 @@ export class CarEntity extends BaseModel {
   @Column('int')
   prise: number;
 
-  @Column('text')
-  currency: string;
+  @Column({
+    type: 'enum',
+    enum: CurrencyEnum,
+    default: CurrencyEnum.UAH,
+  })
+  currency: CurrencyEnum;
 
   @Column('text', { nullable: true })
   image?: string;

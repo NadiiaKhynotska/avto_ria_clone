@@ -14,9 +14,21 @@ export class CarModelRepository extends Repository<CarModelEntity> {
   ): Promise<[CarModelEntity[], number]> {
     const qb = this.createQueryBuilder('model');
     qb.leftJoinAndSelect('model.car_brand', 'brand');
-    qb.orderBy('brand.id', 'ASC');
     qb.take(query.limit);
     qb.skip(query.offset);
     return await qb.getManyAndCount();
+  }
+
+  public async findOneByWithBrand(
+    modelId: string,
+    brandId: string,
+  ): Promise<CarModelEntity> {
+    const qb = this.createQueryBuilder('model');
+    qb.andWhere('model.id = :modelId');
+    qb.leftJoinAndSelect('model.car_brand', 'brand');
+    qb.andWhere('brand.id = :brandId');
+    qb.setParameter('modelId', modelId);
+    qb.setParameter('brandId', brandId);
+    return await qb.getOne();
   }
 }

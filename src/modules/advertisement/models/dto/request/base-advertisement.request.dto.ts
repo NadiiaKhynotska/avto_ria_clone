@@ -12,6 +12,7 @@ import {
 } from 'class-validator';
 
 import { TransformHelper } from '../../../../../common/helpers/transform.helper';
+import { CurrencyEnum } from '../../../../../database/enums/currency.enum';
 import { RegionsEnum } from '../../../../../database/enums/regions.enum';
 
 export class BaseAdvertisementRequestDto {
@@ -38,7 +39,6 @@ export class BaseAdvertisementRequestDto {
 
   @ApiProperty()
   @IsEnum(RegionsEnum)
-  // @Transform(TransformHelper.trim)
   @Type(() => String)
   region: RegionsEnum;
 
@@ -46,7 +46,6 @@ export class BaseAdvertisementRequestDto {
   @IsNumber()
   @Min(1988)
   @Max(new Date().getFullYear())
-  // @Transform(TransformHelper.trim)
   @Type(() => Number)
   year: number;
 
@@ -63,22 +62,17 @@ export class BaseAdvertisementRequestDto {
   @IsInt()
   @Min(0)
   @Max(3000)
-  // @Transform(TransformHelper.trim)
   mileage: number;
 
   @ApiProperty()
   @IsInt()
   @Min(100)
   @Max(1000000)
-  // @Transform(TransformHelper.trim)
-  // @Type(() => String)
   prise: number;
 
-  // @ApiProperty()
-  @IsString()
-  @Transform(TransformHelper.trim)
+  @IsEnum(CurrencyEnum)
   @Type(() => String)
-  currency: string;
+  currency: CurrencyEnum;
 
   @ApiProperty()
   @IsOptional()

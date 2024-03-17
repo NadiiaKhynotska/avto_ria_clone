@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -18,6 +18,7 @@ export class CarBrandModelController {
   constructor(private readonly carBrandModelService: CarBrandModelService) {}
 
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create new brand  name' })
   @Post()
   public async createBrand(
     @CurrentUser() userData: IUserData,
@@ -27,6 +28,7 @@ export class CarBrandModelController {
   }
 
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create new model name according to brand name' })
   @Post('/model')
   public async createModel(
     @CurrentUser() userData: IUserData,
@@ -35,6 +37,7 @@ export class CarBrandModelController {
     return await this.carBrandModelService.createModel(dto);
   }
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all brands' })
   @Get()
   public async getAllBrands(
     @Query() query: BrandModelListRequestDto,
@@ -42,6 +45,7 @@ export class CarBrandModelController {
     return await this.carBrandModelService.getAllBrands(query);
   }
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all models' })
   @Get('/models')
   public async getAllModels(
     @Query() query: BrandModelListRequestDto,

@@ -51,11 +51,15 @@ export class CarBrandModelService {
     if (modelEntity) {
       throw new ConflictException('This model is already exist');
     }
-    const newModel = await this.carModelRepository.save(
+    const entity = await this.carModelRepository.save(
       this.carModelRepository.create({
         model_name: dto.model_name,
         brand_id: brandEntity.id,
       }),
+    );
+    const newModel = await this.carModelRepository.findOneByWithBrand(
+      entity.id,
+      brandEntity.id,
     );
     return CarBrandModelMapper.modelToResponseDto(newModel);
   }

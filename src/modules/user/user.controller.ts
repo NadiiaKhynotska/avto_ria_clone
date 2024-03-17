@@ -9,7 +9,7 @@ import {
   ParseUUIDPipe,
   Put,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
@@ -23,6 +23,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get your own account' })
   @Get('me')
   public async findMe(
     @CurrentUser() userData: IUserData,
@@ -31,6 +32,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update your own account' })
   @Put('me')
   public async updateMe(
     @CurrentUser() userData: IUserData,
@@ -40,22 +42,24 @@ export class UserController {
   }
 
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Change your own account as seller' })
   @Put('me/seller')
   public async becomeSeller(@CurrentUser() userData: IUserData): Promise<void> {
     await this.userService.becomeSeller(userData);
   }
 
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get public user account' })
   @Get(':userId')
   public async getPublicUser(
     @Param('userId', ParseUUIDPipe) userId: string,
-    @CurrentUser() userData: IUserData,
   ): Promise<UserResponseDto> {
-    return await this.userService.getPublicUser(userId, userData);
+    return await this.userService.getPublicUser(userId);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete your own account' })
   @Delete(':userId')
   public async delete(
     @CurrentUser() userData: IUserData,

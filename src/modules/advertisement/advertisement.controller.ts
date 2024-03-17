@@ -9,9 +9,10 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CheckRole } from '../../common/decorators/check.role';
 import { RolesGuard } from '../../common/guards/role.guard';
@@ -20,9 +21,11 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { IUserData } from '../auth/interfaces/user-data.interface';
 import { BadWordsValidation } from './guards/bad-words-validation.guard';
 import { MoreAdvertisementsAllowedGuard } from './guards/more-advertisements-allowed.guard';
+import { AdvertisementListRequestDto } from './models/dto/request/advertisement-list.request.dto';
 import { CreateAdvertisementDto } from './models/dto/request/create-advertisement.dto';
 import { UpdateAdvertisementDto } from './models/dto/request/update-advertisement.dto';
 import { AdvertisementResponseDto } from './models/dto/response/advertisement.response.dto';
+import { AdvertisementListResponseDto } from './models/dto/response/advertisement-list.response.dto';
 import { AdvertisementService } from './services/advertisement.service';
 
 @ApiTags('Advertisement')
@@ -33,6 +36,10 @@ export class AdvertisementController {
   @ApiBearerAuth()
   @CheckRole(RolesEnum.SELLER, RolesEnum.ADMIN, RolesEnum.MANAGER)
   @UseGuards(BadWordsValidation, RolesGuard, MoreAdvertisementsAllowedGuard)
+  @ApiOperation({
+    summary:
+      'Create advertisement. Allowed for users with SELLER, ADMIN MANAGER role',
+  })
   @Post()
   public async create(
     @CurrentUser() userData: IUserData,
@@ -42,6 +49,7 @@ export class AdvertisementController {
   }
 
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update advertisement' })
   @Put(':advertisementId')
   public async update(
     @Param('advertisementId', ParseUUIDPipe) advertisementId: string,
@@ -56,6 +64,7 @@ export class AdvertisementController {
   }
 
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get advertisement by id' })
   @Get(':advertisementId')
   public async getById(
     @Param('advertisementId', ParseUUIDPipe) advertisementId: string,
@@ -64,17 +73,19 @@ export class AdvertisementController {
     return await this.advertisementService.getById(userData, advertisementId);
   }
 
-  // @ApiBearerAuth()
-  // @Get()
-  // public async getAll(
-  //   @CurrentUser() userData: IUserData,
-  //   @Query() query: BrandModelListRequestDto,
-  // ): Promise<AdvertisementResponseDto> {
-  //   return await this.advertisementService.getAll(userData, query);
-  // }
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all advertisements' })
+  @Get()
+  public async getAll(
+    @CurrentUser() userData: IUserData,
+    @Query() query: AdvertisementListRequestDto,
+  ): Promise<AdvertisementListResponseDto> {
+    return await this.advertisementService.getAll(userData, query);
+  }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete own advertisement' })
   @Delete(':advertisementId')
   public async delete(
     @Param('advertisementId', ParseUUIDPipe) advertisementId: string,

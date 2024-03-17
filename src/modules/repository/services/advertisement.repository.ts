@@ -18,12 +18,20 @@ export class AdvertisementRepository extends Repository<AdvertisementEntity> {
     return entity;
   }
 
+  public async getAdvertisementById(
+    advertisementId: string,
+  ): Promise<AdvertisementEntity> {
+    const qb = this.createQueryBuilder('advertisement');
+    qb.leftJoinAndSelect('advertisement.car', 'car');
+    qb.where('advertisement.id = :advertisementId');
+    qb.setParameter('advertisementId', advertisementId);
+    return await qb.getOne();
+  }
   public async getAll(
     query: AdvertisementListRequestDto,
   ): Promise<[AdvertisementEntity[], number]> {
     const qb = this.createQueryBuilder('advertisement');
     qb.leftJoinAndSelect('advertisement.car', 'car');
-    qb.orderBy('car_id', 'ASC');
     qb.take(query.limit);
     qb.skip(query.offset);
     return await qb.getManyAndCount();

@@ -45,11 +45,8 @@ export class UserService {
       HttpStatus.OK,
     );
   }
-  public async getPublicUser(
-    userId: string,
-    userData: IUserData,
-  ): Promise<UserResponseDto> {
-    const entity = await this.userRepository.getById(userId, userData);
+  public async getPublicUser(userId: string): Promise<UserResponseDto> {
+    const entity = await this.userRepository.getById(userId);
     return UserMapper.toResponseDto(entity);
   }
 

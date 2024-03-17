@@ -22,6 +22,9 @@ export class CarBrandModelMapper {
     return {
       id: carModelEntity.id,
       model_name: carModelEntity.model_name,
+      brand_name: carModelEntity.car_brand
+        ? carModelEntity.car_brand.brand_name
+        : null,
     };
   }
 
@@ -45,14 +48,14 @@ export class CarBrandModelMapper {
     total: number,
     query: BrandModelListRequestDto,
   ): ModelListResponseDto {
-    const modelResponseDtoList: ModelResponseDto[] = entities.map((model) => ({
-      id: model.id,
-      model_name: model.model_name,
-      brand_id: model.brand_id,
-    }));
+    // const modelResponseDtoList: ModelResponseDto[] = entities.map((model) => ({
+    //   id: model.id,
+    //   model_name: model.model_name,
+    //   brand_name: model?.brand.brand_name,
+    // }));
 
     return {
-      data: modelResponseDtoList,
+      data: entities.map(this.modelToResponseDto),
       meta: {
         limit: query.limit,
         offset: query.offset,

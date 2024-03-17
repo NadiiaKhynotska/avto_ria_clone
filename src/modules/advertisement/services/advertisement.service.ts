@@ -11,14 +11,18 @@ import { CarRepository } from '../../repository/services/car.repository';
 import { CarBrandRepository } from '../../repository/services/car-brand.repository';
 import { CarModelRepository } from '../../repository/services/car-model.repository';
 import { StatisticRepository } from '../../repository/services/statistic.repository';
+import { AdvertisementListRequestDto } from '../models/dto/request/advertisement-list.request.dto';
 import { BaseAdvertisementRequestDto } from '../models/dto/request/base-advertisement.request.dto';
 import { UpdateAdvertisementDto } from '../models/dto/request/update-advertisement.dto';
 import { AdvertisementResponseDto } from '../models/dto/response/advertisement.response.dto';
+import { AdvertisementListResponseDto } from '../models/dto/response/advertisement-list.response.dto';
 import { AdvertisementMapper } from './advertisement.mapper';
+import { CurrencyService } from './currency.service';
 
 @Injectable()
 export class AdvertisementService {
   constructor(
+    private readonly currencyService: CurrencyService,
     private readonly advertisementRepository: AdvertisementRepository,
     private readonly carRepository: CarRepository,
     private readonly carBrandRepository: CarBrandRepository,
@@ -44,17 +48,20 @@ export class AdvertisementService {
       prise,
       color,
     } = dto;
-
-    const brandEntity = await this.carBrandRepository.findOneBy({
-      brand_name: car_brand,
-    });
+    const [brandEntity] = await Promise.all([
+      this.carBrandRepository.findOneBy({
+        brand_name: car_brand,
+      }),
+    ]);
     if (!brandEntity) {
       throw new UnprocessableEntityException('There is no such brand');
     }
-    const modelEntity = await this.carModelRepository.findOneBy({
-      brand_id: brandEntity.id,
-      model_name: car_model,
-    });
+    const [modelEntity] = await Promise.all([
+      this.carModelRepository.findOneBy({
+        brand_id: brandEntity.id,
+        model_name: car_model,
+      }),
+    ]);
     if (!modelEntity) {
       throw new UnprocessableEntityException('There is no such model');
     }
@@ -119,28 +126,26 @@ export class AdvertisementService {
     userData: IUserData,
     advertisementId: string,
   ): Promise<AdvertisementResponseDto> {
-    const advertisementEntity = await this.advertisementRepository.findOneBy({
-      id: advertisementId,
-    });
+    const advertisementEntity =
+      await this.advertisementRepository.getAdvertisementById(advertisementId);
     if (advertisementEntity.user_id !== userData.userId) {
       await this.statisticRepository.save(
         this.statisticRepository.create({ advertisement_id: advertisementId }),
       );
     }
-    const carEntity = await this.carRepository.findOneBy({
-      id: advertisementEntity.car_id,
-    });
-    return AdvertisementMapper.toResponseDto(advertisementEntity, carEntity);
+    const { currency, prise } = advertisementEntity.car;
+    await this.currencyService.convertPriceToUAH(prise, currency);
+    return AdvertisementMapper.toResponseDtoById(advertisementEntity);
   }
 
-  // public async getAll(
-  //   userData: IUserData,
-  //   query: BrandModelListRequestDto,
-  // ): Promise<AdvertisementListResponseDto> {
-  //   const [entities, total] = await this.advertisementRepository.getAll(query);
-  //
-  //   return AdvertisementMapper.ToListResponseDto(entities, total, query);
-  // }
+  public async getAll(
+    userData: IUserData,
+    query: AdvertisementListRequestDto,
+  ): Promise<AdvertisementListResponseDto> {
+    const [entities, total] = await this.advertisementRepository.getAll(query);
+
+    return AdvertisementMapper.ToListResponseDto(entities, total, query);
+  }
 
   public async delete(
     userData: IUserData,

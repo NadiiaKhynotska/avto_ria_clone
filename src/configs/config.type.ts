@@ -3,6 +3,7 @@ export type Config = {
   postgres: PostgresConfig;
   redis: RedisConfig;
   jwt: JWTConfig;
+  s3: S3Config;
 };
 export type AppConfig = {
   host: string;
@@ -27,4 +28,14 @@ export type JWTConfig = {
   accessTokenExpiration: number;
   refreshTokenSecret: string;
   refreshTokenExpiration: number;
+};
+
+export type S3Config = {
+  accessKeyId: string;
+  secretAccessKey: string;
+  objectAcl: string;
+  bucketPath: string;
+  bucketName: string;
+  s3Endpoint: string;
+  s3Region: string;
 };
